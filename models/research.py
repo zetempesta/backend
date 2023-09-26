@@ -27,7 +27,7 @@ def set_operator(operator:int, id_contact:int, id_research):
     update 
         respondent 
     set 
-    operator = """ + str(operator) + """,
+    user_operator = """ + str(operator) + """,
     status_contact = 1
     where id_contact = """ + str(id_contact) + """ and id_research = """ + str(id_research)
     db.executa_sql(sql)
