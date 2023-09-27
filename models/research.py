@@ -52,7 +52,7 @@ def get_person(contact:int)->person:
     contact_data = list(dict.fromkeys([sublist[0:4] for sublist in query]))
     phones = [sublist[4] for sublist in query]
 
-    return person(idPerson=contact_data[0][0],name=contact_data[0][1],idCity=contact_data[0][2],idNeighboor=contact_data[0][3],phones=phones)
+    return person(idPerson=contact_data[0][0],name=contact_data[0][1],idCity=contact_data[0][2],idNeighboor=contact_data[0][3],phones=phones,sex='')
     
     
 
