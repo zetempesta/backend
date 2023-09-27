@@ -26,6 +26,7 @@ def postAnswer(answer:ar)->bool:
                 id = """ + str(answer.person.idPerson)
     db.executa_sql(sql)
 
+    print(sql)
 
     for r in answer.responses:
         response_value=''
@@ -54,5 +55,7 @@ def postAnswer(answer:ar)->bool:
                     answer = '""" + str(response_value) + """'"""
        
         db.executa_sql(sql)
+
+        
 
     return True
