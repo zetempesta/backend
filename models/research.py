@@ -48,6 +48,8 @@ def get_person(contact:int)->person:
                 contact_phone.contact = """ + str(contact)
 
     query = db.consultar_db(sql)
+
+    print(sql)
     
     contact_data = list(dict.fromkeys([sublist[0:4] for sublist in query]))
     phones = [sublist[4] for sublist in query]
