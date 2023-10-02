@@ -47,6 +47,8 @@ def fix_answers() -> bool:
 
     db.executa_sql(sql + ",".join(values))
 
+    return True
+
 
 def get_answers() -> List[schema_db_answer]:
 
