@@ -48,9 +48,7 @@ def get_person(contact:int)->person:
                 contact_phone.contact = """ + str(contact)
 
     query = db.consultar_db(sql)
-
-    print(sql)
-    
+        
     contact_data = list(dict.fromkeys([sublist[0:4] for sublist in query]))
     phones = [sublist[4] for sublist in query]
 
@@ -110,6 +108,7 @@ def get_participant()-> participant:
                             Where
                                 respondent.status_contact = 0 And
                                 research.valid
+                            ORDER BY random()
                             Limit 1""")
     return participant( id_contact=query[0][0],id_research= query[0][1])
 
