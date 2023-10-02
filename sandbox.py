@@ -1,3 +1,3 @@
-from  models.research import get_research
+from transformation.fix_answers import fix_answers
 
-get_research()
+fix_answers()
