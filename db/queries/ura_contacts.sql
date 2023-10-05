@@ -1,5 +1,3 @@
-from ura.ura import contacts_for_ura
-sql = """
 Select
     contact.id As id_contact,
     phone.phone_number
@@ -16,6 +14,3 @@ Where
     respondent.id_contact Is Null And
     phone.phone_number Like '(65) 9%' And
     Length(phone.phone_number) = 14
-    limit 8000
-    """
-contacts_for_ura(sql)

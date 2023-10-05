@@ -10,7 +10,9 @@ import v1.routers.user as user
 import v1.routers.neighborhood  as neighborhood
 import v1.routers.answer as answer
 import v1.routers.fix_answers as fix_answers
+import v1.routers.ura as ura
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 app = FastAPI()
@@ -31,3 +33,4 @@ app.include_router(user.router)
 app.include_router(neighborhood.router)
 app.include_router(answer.router)
 app.include_router(fix_answers.router)
+app.include_router(ura.router)
