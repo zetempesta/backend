@@ -111,4 +111,3 @@ def get_participant()-> participant:
                             ORDER BY random()
                             Limit 1""")
     return participant( id_contact=query[0][0],id_research= query[0][1])
-

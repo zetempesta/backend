@@ -2,6 +2,7 @@ from db.pg import pg
 from typing import List
 from db.db_conf import db_conf
 from schema.user import user as user_schema
+from schema.user import db_user
 
 conf = db_conf()
 db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
@@ -18,4 +19,6 @@ def get_user(user, password)->user_schema:
     name = query[0][2]
     username = query[0][3]
     return user_schema(id=id, mail=mail, name=name, username=username)
-    
+
+def post_user(user:db_user)->bool:
+    sql = ""
