@@ -6,7 +6,6 @@ from schema.person import person
 from schema.responseOptions import responseOption
 from schema.participant import participant
 from db.db_conf import db_conf
-
 conf = db_conf()
 
 

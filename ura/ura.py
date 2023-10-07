@@ -1,11 +1,16 @@
 from db.pg import pg
 import csv
 from db.db_conf import db_conf
-from fastapi import File, UploadFile
+from fastapi import File
 from schema.ura import ura_results, ura_maillist
 from typing import List
+from core.properties import configuration
 import re
+import os
 
+
+
+app_conf = configuration()
 
 
 conf = db_conf()
@@ -68,19 +73,12 @@ def ura_update_contact(results:List[ura_results]):
 
 def contacts_for_ura(sql)->bool:
     contacts = db.consultar_db(sql)
-    with open('/var/www/html/ura/mailing.csv', 'w', encoding='latin_1') as f:
-        writer = csv.writer(f)
+    with open(app_conf.apache_folder + os.sep +  'mailing.csv', 'w', encoding='latin_1') as f:
+
         line = "({};{};{};{};{};{};{};{};{};{})".format('|', 'telefone', '|', 'nome', 'endereco', 'cpf', 'TIPO', 'CLASSE','id', 'info')
-        writer.writerow(line)
+        f.write(line + '\r\n')
         for c in contacts:
-            line = "({};{};{};{};{};{};{};{};{};{})".format('|', str(re.findall(r'\d+', c[1])), '|', 'nome', 'endereco', 'cpf', 'E', 'D',c[0], 'info')
-            writer.writerow(line)
-        
+            phone = str(re.findall(r'\d+', c[1])[0])
+            line = "{};{};{};{};{};{};{};{};{};{}".format('|', phone, '|', 'nome', 'endereco', 'cpf', 'E', 'D', c[0], 'info')
 
-
-
-
-
-
-    
-        
+            f.write(line + '\r\n')
