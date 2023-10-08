@@ -8,6 +8,48 @@ conf = db_conf()
 db = pg(conf.host, conf.database, conf.user, conf.port, conf.password)
 date_format = '%Y-%m-%d %H:%M:%S.%f'
 
+def set_contact_tags(idResearch:int):
+    sql = """   Select
+                    analysis.answer.contato,
+                    tag_question.tag As key,
+                    analysis.answer.answer As value
+                From
+                    tag_question Inner Join
+                    analysis.answer On analysis.answer.research = tag_question.id_research
+                            And analysis.answer.question = tag_question.id_question Inner Join
+                    vw_contact_answered On vw_contact_answered.research = analysis.answer.research
+                            And vw_contact_answered.contato = analysis.answer.contato
+                Order By
+                    analysis.answer.research Desc"""
+    
+    contact_tags = db.consultar_db(sql)
+
+    
+    
+
+def fix_results(idResearch)->bool:
+    sql = """   Select
+                    vw_contact_answered.research,
+                    vw_contact_answered.contato,
+                    question.wording,
+                    question.order_question,
+                    city.name As cidade,
+                    neighborhood.name As bairro,
+                    contact.sex,
+                    analysis.answer.answer
+                From
+                    analysis.answer Inner Join
+                    vw_contact_answered On vw_contact_answered.research = analysis.answer.research
+                            And vw_contact_answered.contato = analysis.answer.contato Inner Join
+                    contact On vw_contact_answered.contato = contact.id Left Join
+                    city On city.id = contact.city Left Join
+                    neighborhood On contact.neighborhood = neighborhood.id Inner Join
+                    question On analysis.answer.question = question.id"""
+    db.executa_sql('truncate table "analysis".results')
+    answers_list = db.consultar_db(sql)
+
+    # for a in answers_list:
+
 
 def fix_answers() -> bool:
 

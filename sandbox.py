@@ -1,4 +1,8 @@
 from ura.ura import contacts_for_ura
+
+
+
+
 sql = """
 Select
     contact.id As id_contact,
