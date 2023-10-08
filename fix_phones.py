@@ -32,14 +32,14 @@ def read_phones():
 
 def drop_phones_table():
     print('drop_phones_table()')
-    sql = "drop table phone"
+    sql = "drop table IF EXISTS phone"
     sq.conn.execute(sql)
     sq.conn.commit()
 
 def duplicate_table_phone():
     print('duplicate_table_phone()')
 
-    sql = "drop table fixed_phone"
+    sql = "drop table IF EXISTS fixed_phone"
     sq.conn.execute(sql)
     sq.conn.commit()
 
@@ -198,8 +198,8 @@ def fix():
     t.sort()
     print(t)
 
-# drop_phones_table()
-# create_phone_table()
-# read_phones()
-# duplicate_table_phone()
-# fix()
+drop_phones_table()
+create_phone_table()
+read_phones()
+duplicate_table_phone()
+fix()
