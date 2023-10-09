@@ -29,10 +29,21 @@ class pg:
       port=Self.Port,
       password=Self.Password)
 
-  def executa_sql(Self, sql):
+  def executa_sql(Self, sql, commit:bool=True):
       cur = Self.Conn.cursor()
       cur.execute(sql)
+      if commit:
+        Self.Conn.commit()
+
+  def executa_sqls(Self, sql, param_values):
+      cur = Self.Conn.cursor()
+      cur.executemany(sql, param_values)
       Self.Conn.commit()
+  
+  def commit_db(Self):
+    Self.Conn.commit()
+    
+      
 
   def consultar_db(Self, sql):
     cur = Self.Conn.cursor()

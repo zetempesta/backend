@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from transformation.fix_answers import fix_answers
+from transformation.fix_answers import fix_answers, fix_data
 
 
 router = APIRouter()
 
-@router.get("/fix_answer", response_model=bool)
-async def postAnswer():
-    return fix_answers()
+
+@router.get("/fixanswer", response_model=bool)
+async def fixData(idResearch:int):
+    return fix_data(idResearch)

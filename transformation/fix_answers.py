@@ -3,52 +3,116 @@ from schema.answer import db_answer as schema_db_answer
 from db.db_conf import db_conf
 from typing import List
 from datetime import datetime
+import pandas as pd
+import numpy as np
+
+
 
 conf = db_conf()
 db = pg(conf.host, conf.database, conf.user, conf.port, conf.password)
 date_format = '%Y-%m-%d %H:%M:%S.%f'
 
+
+def generate_parquet(id_research:int)->bool:
+    # TODO Incluir key-valeu do Research
+    conf = db_conf()
+    db = pg(conf.host, conf.database, conf.user, conf.port, conf.password)
+
+    sql = """Select
+        "vca"."research",
+        "vca"."contato",
+        LPad("qu"."order_question"::Text, 2, '0') || '-' || "qu"."wording" As "wording",
+        "aa"."question",
+        "qu"."order_question",
+        "ci"."name" As "cidade",
+        "ne"."name" As "bairro",
+        "con"."sex",
+        "aa"."answer",
+        "re"."name" As "research_name",
+        "ne"."region",
+        "ct"."key" As "ct_key",
+        "ct"."value" As "ct_value"
+    From
+        "research"."analysis"."answer" "aa" Inner Join
+        "research"."public"."vw_contact_answered" "vca" On "vca"."research" = "aa"."research"
+                And "vca"."contato" = "aa"."contato" Inner Join
+        "research"."public"."contact" "con" On "vca"."contato" = "con"."id" Inner Join
+        "research"."public"."city" "ci" On "ci"."id" = "con"."city" Inner Join
+        "research"."public"."neighborhood" "ne" On "con"."neighborhood" = "ne"."id" Inner Join
+        "research"."public"."question" "qu" On "aa"."question" = "qu"."id" Inner Join
+        "research"."public"."research" "re" On "re"."id" = "aa"."research" Left Join
+        "research"."public"."contact_tag" "ct" On "ct"."id_contact" = "con"."id" Left Join
+        "research"."public"."research_tag" "reta" On "vca"."research" = "reta"."id_research"
+                And "vca"."contato" = "reta"."id_contact"
+    Where
+        "vca"."research" = """ + str(id_research) + """ And
+        "ct"."key" Is Not Null And
+        "ct"."value" Is Not Null"""
+
+    dat = pd.read_sql_query(sql=sql, con=db.Conn, dtype={'wording': 'str', 'cidade': 'str', 'bairro': 'str','sex': 'str','answer': 'str','research_name': 'str','region': 'str'})
+
+    dat['sex'].replace(['Female', 'female', 'f', 'feminino'],
+                    'Feminino', inplace=True)
+    dat['sex'].replace(['m','Male', 'male', 'masculino'], 'Masculino', inplace=True)
+    dat['sex'].replace(['', None, 'a'], 'A', inplace=True)
+
+    df_pivoted = dat.pivot(index=["research", "contato", "question", "wording", "order_question", "cidade", "bairro", "sex",
+                        "answer", "research_name", "region"], columns=["ct_key"], values=["ct_value"])
+
+    df_pivoted.columns = [f'{j}_{i}' for i, j in df_pivoted.columns]
+
+    df = df_pivoted 
+    for c in df.columns:
+        df = df.rename(columns={c: c.replace('_ct_value','')})
+
+
+    df.to_csv(path_or_buf='results.csv',sep='|', mode='w', encoding='utf-8', lineterminator='\n')
+    df.to_parquet(path='results.parquet')
+
+
 def set_contact_tags(idResearch:int):
     sql = """   Select
                     analysis.answer.contato,
-                    tag_question.tag As key,
-                    analysis.answer.answer As value
+                    contact_tag_question.tag As key,
+                    analysis.answer.answer As value,
+                    analysis.answer.answer As value_update
                 From
-                    tag_question Inner Join
-                    analysis.answer On analysis.answer.research = tag_question.id_research
-                            And analysis.answer.question = tag_question.id_question Inner Join
+                    contact_tag_question Inner Join
+                    analysis.answer On analysis.answer.research = contact_tag_question.id_research
+                            And analysis.answer.question = contact_tag_question.id_question Inner Join
                     vw_contact_answered On vw_contact_answered.research = analysis.answer.research
                             And vw_contact_answered.contato = analysis.answer.contato
-                Order By
-                    analysis.answer.research Desc"""
+                Where
+                    analysis.answer.research =  """ + str(idResearch) 
+    print('Consultou')
+    contact_tags = db.consultar_db(sql)
+
+    list_commands=list()
+
+    for c in contact_tags:
+
+        sql = """   INSERT INTO 
+                        "public"."contact_tag" ( "id_contact", "key", "value") VALUES ( {}, '{}', '{}')
+                    ON CONFLICT ON CONSTRAINT contact_tag_pkey
+                    DO UPDATE SET value = '{}'""".format(c[0],c[1],c[2],c[3])
+        list_commands.append(sql)
+    db.executa_sql(";".join(list_commands))
+
+def set_research_tags(idResearch:int):
+    sql = """ """
     
     contact_tags = db.consultar_db(sql)
 
-    
-    
+    for c in contact_tags:
+        sql = """""".format(c[0],c[1], c[2])
+        db.executa_sql(sql)        
 
-def fix_results(idResearch)->bool:
-    sql = """   Select
-                    vw_contact_answered.research,
-                    vw_contact_answered.contato,
-                    question.wording,
-                    question.order_question,
-                    city.name As cidade,
-                    neighborhood.name As bairro,
-                    contact.sex,
-                    analysis.answer.answer
-                From
-                    analysis.answer Inner Join
-                    vw_contact_answered On vw_contact_answered.research = analysis.answer.research
-                            And vw_contact_answered.contato = analysis.answer.contato Inner Join
-                    contact On vw_contact_answered.contato = contact.id Left Join
-                    city On city.id = contact.city Left Join
-                    neighborhood On contact.neighborhood = neighborhood.id Inner Join
-                    question On analysis.answer.question = question.id"""
-    db.executa_sql('truncate table "analysis".results')
-    answers_list = db.consultar_db(sql)
+def fix_data(idResearch)->bool:
+    fix_answers()
+    set_contact_tags(idResearch)
+    generate_parquet(idResearch)
+    return True
 
-    # for a in answers_list:
 
 
 def fix_answers() -> bool:
