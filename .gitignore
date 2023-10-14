@@ -23,6 +23,13 @@ dist
 dist-ssr
 *.local
 
+# Data files
+*.xls
+*.xlsx
+*.ods
+*.db
+
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
