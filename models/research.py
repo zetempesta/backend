@@ -1,6 +1,6 @@
 from db.pg import pg
 from typing import List
-from schema.research import research
+from schema.research import research, researchDB
 from schema.question import question
 from schema.person import person
 from schema.responseOptions import responseOption
@@ -53,8 +53,6 @@ def get_person(contact:int)->person:
 
     return person(idPerson=contact_data[0][0],name=contact_data[0][1],idCity=contact_data[0][2],idNeighboor=contact_data[0][3],phones=phones,sex='')
     
-    
-
 def get_questions(research_id:int)->List[question]:
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
 
@@ -98,9 +96,8 @@ def get_questions(research_id:int)->List[question]:
     
     return questions
         
-
-
 def get_participant()-> participant:
+
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
     query = db.consultar_db("""
                             Select respondent.id_contact, respondent.id_research, research.valid From respondent Inner Join research On respondent.id_research = research.id
@@ -110,3 +107,8 @@ def get_participant()-> participant:
                             ORDER BY random()
                             Limit 1""")
     return participant( id_contact=query[0][0],id_research= query[0][1])
+
+def post_research(r:researchDB)->bool:
+    db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
+    sql = """INSERT INTO "public"."research" ( "name", "begin_date", "end_date", "id", "valid", "meta") 
+                VALUES ( '{}', now(), now(), {}, false, {} )""".format(r.name, r.id, r.meta)

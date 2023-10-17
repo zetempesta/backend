@@ -7,3 +7,13 @@ class question(BaseModel):
     titleQuestion: str
     type: str
     responseOptions:List[responseOption]
+
+
+class questionDB(BaseModel):
+    id: int
+    survey: int
+    wording:str
+    order_question:int
+    null_answer:str
+    formtype:str
+    
