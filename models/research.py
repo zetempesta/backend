@@ -108,7 +108,16 @@ def get_participant()-> participant:
                             Limit 1""")
     return participant( id_contact=query[0][0],id_research= query[0][1])
 
-def post_research(r:researchDB)->bool:
+def post_research(r:researchDB)->int:
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
+  
+    sql ="nextval('research_id_seq'::regclass)"
+    db.consultar_db(sql=sql)
+    id = db.consultar_db(sql=sql)[0]
+
+    print(id)
     sql = """INSERT INTO "public"."research" ( "name", "begin_date", "end_date", "id", "valid", "meta") 
                 VALUES ( '{}', now(), now(), {}, false, {} )""".format(r.name, r.id, r.meta)
+    return id
+
+
