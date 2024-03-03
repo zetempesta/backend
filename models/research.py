@@ -111,13 +111,17 @@ def get_participant()-> participant:
 def post_research(r:researchDB)->int:
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
   
-    sql ="nextval('research_id_seq'::regclass)"
+    print("1")
+    sql ="select nextval('research_id_seq') as ID"
+    print("2")
     db.consultar_db(sql=sql)
-    id = db.consultar_db(sql=sql)[0]
+    print("3")
+    id = db.consultar_db(sql=sql)[0][0]
+    print("4")
 
-    print(id)
+    print(type(id))
     sql = """INSERT INTO "public"."research" ( "name", "begin_date", "end_date", "id", "valid", "meta") 
-                VALUES ( '{}', now(), now(), {}, false, {} )""".format(r.name, r.id, r.meta)
-    return id
+                VALUES ( '{}', '{}', '{}', {}, false, {} )""".format(r.name, r.begin_date.isoformat(), r.end_date.isoformat(), id, r.meta)
+    return int(id)
 
 

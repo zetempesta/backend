@@ -1,9 +1,4 @@
-from typing import Union
-from fastapi import FastAPI, Request
-from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
 import v1.routers.city as city
 import v1.routers.research as research
 import v1.routers.user as user

@@ -53,5 +53,4 @@ class pg:
     for rec in recset:
       registros.append(rec)
     return registros
-
-
+  
