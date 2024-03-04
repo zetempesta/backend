@@ -101,8 +101,8 @@ def get_participant(user:int)-> participant:
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
     query = db.consultar_db(f"""
                                 Select
-                                        research.public.respondent.id_research,
-                                        research.public.respondent.id_contact
+                                        research.public.respondent.id_contact,
+                                        research.public.respondent.id_research
                                     From
                                         respondent Inner Join
                                         research On research.public.respondent.id_research = research.id Inner Join
@@ -113,6 +113,7 @@ def get_participant(user:int)-> participant:
                                         research.public.respondent.status_contact = 0
                                     ORDER BY random()
                                     Limit 1""")
+    
     return participant( id_contact=query[0][0],id_research= query[0][1])
 
 def post_research(r:researchDB)->int:
