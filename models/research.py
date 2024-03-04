@@ -99,7 +99,7 @@ def get_questions(research_id:int)->List[question]:
 def get_participant(user:int)-> participant:
 
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
-    query = db.consultar_db("""
+    query = db.consultar_db(f"""
                             Select respondent.id_contact, respondent.id_research, research.valid 
                             From
                                 respondent Inner Join
