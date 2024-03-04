@@ -12,7 +12,7 @@ conf = db_conf()
 
 def get_research(user:int)->research:
     
-    p = get_participant()
+    p = get_participant(user)
     set_operator(user, p.id_contact, p.id_research)
     questions = get_questions(p.id_research)
     person_data = get_person(p.id_contact)
@@ -96,15 +96,21 @@ def get_questions(research_id:int)->List[question]:
     
     return questions
         
-def get_participant()-> participant:
+def get_participant(user:int)-> participant:
 
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
     query = db.consultar_db("""
-                            Select respondent.id_contact, respondent.id_research, research.valid From respondent Inner Join research On respondent.id_research = research.id
+                            Select respondent.id_contact, respondent.id_research, research.valid 
+                            From
+                                respondent Inner Join
+                                research On research.respondent.id_research = research.id Inner Join
+                                research_user On research_user.id_research = research.id
                             Where
-                                respondent.status_contact = 0 And
-                                research.valid
-                            ORDER BY random()
+                                research.respondent.status_contact = 0 And
+                                research.valid And
+                                research_user.id_user = {user}
+                            Order By
+                                Random()
                             Limit 1""")
     return participant( id_contact=query[0][0],id_research= query[0][1])
 
