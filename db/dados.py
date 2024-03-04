@@ -37,15 +37,14 @@ def get_participante_livre():
 
 
 def atualiza_resposta(valores):
-    print('atualiza_resposta')
-    print(valores)
+
     bd = pg.pg('167.86.105.252', 'unimed', 'postgres', '5432', 'Ganesha@1000')
     sql = "UPDATE public.resposta "
     sql = sql + f" SET q1='{valores[1]}', q2='{valores[2]}', q3='{valores[3]}', q4='{valores[4]}',"
     sql = sql + f" q5='{valores[5]}', q6='{valores[6]}', q7='{valores[7]}', q8='{valores[8]}', data_hora_2=now(),"
     sql = sql + f" atendeu={valores[9]}, respondeu={valores[10]}"
     sql = sql + f" WHERE crm='{valores[0]}';"
-    print(sql)
+
     bd.executa_sql(sql)
     bd.fechaBD()
 

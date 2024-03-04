@@ -20,7 +20,7 @@ while xlsx.read_cell(line,1) != None:
 
 xlsx.close_document()
 
-print('coop')
+
 xlsx = tempesta_excel.Excel('./novo.xlsx','NOVOS')
 novos = {}
 line = 1
@@ -37,7 +37,7 @@ while xlsx.read_cell(line,1) != None:
 
 xlsx.close_document()
 
-print('novos')
+
 for k in novos.keys():    
     if k in coop:
         name = coop[k][0]
@@ -48,7 +48,7 @@ for k in novos.keys():
     else:
         coop[k] = novos[k]
 
-print('relacao')
+
 xlsx = tempesta_excel.Excel('./dados.xlsx','dados')
 
 line=1
@@ -58,10 +58,10 @@ for k in coop.keys():
     xlsx.write_cell(line,2, coop[k][0])
     xlsx.write_cell(line,3, coop[k][1])
     xlsx.write_cell(line,4, coop[k][2])
-    print(line)
+    
 
 xlsx.save()
 xlsx.close_document()
-print('finalizou')
+
 
 

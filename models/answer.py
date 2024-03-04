@@ -8,7 +8,7 @@ conf = db_conf()
 
 def postAnswer(answer:ar)->bool:
     db = pg(conf.host, conf.database,conf.user, conf.port, conf.password)
-    print(answer)
+    
     sql = """UPDATE "public"."respondent" SET
     	        "dont_pickup" = """ + str(answer.dontAnswer) + """,
 	            "dont_accept" = """ + str(answer.dontTalk)  + """
@@ -26,7 +26,7 @@ def postAnswer(answer:ar)->bool:
                 id = """ + str(answer.person.idPerson)
     db.executa_sql(sql)
 
-    print(sql)
+    
 
     for r in answer.responses:
         response_value=''

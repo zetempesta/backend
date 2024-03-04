@@ -19,7 +19,6 @@ while xlsx.read_cell(line,1) != None:
 
     sql = sql + f"INSERT INTO public.contato(crm, nome_contato, telefones, inimigo) VALUES ('{crm}', '{nome}', '{telefone}', {inimigo});"
    
-    print (line)
     line +=1
 
 bd.executa_sql(sql)

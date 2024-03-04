@@ -28,7 +28,6 @@ def set_contact_tags(idResearch:int):
                             And vw_contact_answered.contato = analysis.answer.contato
                 Where
                     analysis.answer.research =  """ + str(idResearch) 
-    print('Consultou')
     contact_tags = db.consultar_db(sql)
 
     list_commands=list()

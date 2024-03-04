@@ -45,12 +45,12 @@ def novo_contato(request:req):
 @app.post("/respostas")
 def respostas(request:req):
     
-    print('respostas')
+    
     respostas = str(request.params['respostas'])
     
     valores = respostas.split('¬')
     dados.atualiza_resposta(valores)
-    print(respostas)
+    
     return Response('ok')
 
 app.mount() ("/pages", StaticFiles(directory="pages"), name="pages")
