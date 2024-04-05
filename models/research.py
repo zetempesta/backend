@@ -5,10 +5,9 @@ from schema.question import question
 from schema.person import person
 from schema.responseOptions import responseOption
 from schema.participant import participant
+from models.call import newCall
 from db.db_conf import db_conf
 conf = db_conf()
-
-
 
 def get_research(user:int)->research:
     
@@ -18,6 +17,7 @@ def get_research(user:int)->research:
     person_data = get_person(p.id_contact)
 
     #TODO Incluir o nome da pesquisa no retorno
+    newCall(id_user=user, id_research=p.id_research, id_contact=p.id_contact)
     return research(idResearch=p.id_research,name='',person=person_data,questions=questions)
 
 def set_operator(operator:int, id_contact:int, id_research):
