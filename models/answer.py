@@ -26,6 +26,15 @@ def postAnswer(answer:ar)->bool:
                 id = """ + str(answer.person.idPerson)
     db.executa_sql(sql)
 
+    sql = f"""UPDATE "public"."calls" SET "end_time" = now() WHERE "id" in Select
+                Max(calls.id) As id
+            From
+                calls
+            Where
+                calls.id_research = {answer.idResearch} And
+                calls.id_contact = {answer.person.idPerson};"""
+    db.executa_sql(sql)
+
     for r in answer.responses:
         response_value=''
         match r.type:
